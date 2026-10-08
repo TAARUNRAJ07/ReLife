@@ -1,0 +1,15 @@
+{
+  "commands": [
+    {
+      "command_id": "CMD-20261007-009",
+      "command": "START_TEST",
+      "params": {
+        "test_type": "capacity",
+        "battery_id": "RL-BAT-0042",
+        "cutoff_voltage_v": 10.0,
+        "max_duration_s": 3600
+      },
+      "created_at": "2026-10-07T21:30:05.000Z"
+    }
+  ]
+}

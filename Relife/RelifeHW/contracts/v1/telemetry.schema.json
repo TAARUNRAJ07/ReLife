@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ReLifeDeviceTelemetryBatch",
+  "description": "Telemetry ingest batch payload sent from ReLife ESP32 test rig to backend.",
+  "type": "object",
+  "required": [
+    "device_id",
+    "boot_id",
+    "sent_at",
+    "records"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "device_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Unique hardware device identifier (e.g., ESP32-RIG-001)"
+    },
+    "boot_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Unique boot run identifier generated on MCU startup"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO-8601 timestamp when batch was transmitted by the client"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["live", "replay", "journal_catchup"],
+      "default": "live",
+      "description": "Data origin flag"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/definitions/TelemetryRecord"
+      }
+    }
+  },
+  "definitions": {
+    "TelemetryRecord": {
+      "type": "object",
+      "required": [
+        "seq",
+        "timestamp",
+        "battery_id",
+        "calibration_version",
+        "quality_flags"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Monotonically increasing sequence number per boot_id"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UTC ISO-8601 timestamp at sample acquisition"
+        },
+        "battery_id": {
+          "type": "string",
+          "pattern": "^RL-BAT-[0-9]{4}$",
+          "description": "Standard ReLife battery pack ID"
+        },
+        "pack_voltage_v": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 25.0,
+          "description": "Total pack terminal voltage in Volts (4S nominal ~12.8V-16.8V)"
+        },
+        "current_a": {
+          "type": ["number", "null"],
+          "description": "Pack current in Amperes. Convention: positive = discharge, negative = charge"
+        },
+        "cell_voltages_v": {
+          "type": ["array", "null"],
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": ["number", "null"],
+            "minimum": 0.0,
+            "maximum": 5.0
+          },
+          "description": "Individual 4S cell voltages [Cell1, Cell2, Cell3, Cell4] in Volts"
+        },
+        "temperatures_c": {
+          "type": ["array", "null"],
+          "items": {
+            "type": ["number", "null"],
+            "minimum": -40.0,
+            "maximum": 120.0
+          },
+          "description": "Temperatures in degC [Cell_Average, BMS_FET, Shunt, Ambient]"
+        },
+        "bms_soc_pct": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "State of Charge percentage reported by BMS (0-100)"
+        },
+        "bms_soh_pct": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "State of Health percentage reported by BMS (0-100)"
+        },
+        "ah_discharged": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "description": "Integrated discharge capacity in Ampere-hours since test start"
+        },
+        "interlock_state": {
+          "type": "string",
+          "enum": ["SAFE_DISARMED", "ARMED_ACTIVE", "TRIPPED_OVERVOLTAGE", "TRIPPED_UNDERVOLTAGE", "TRIPPED_OVERTEMP", "TRIPPED_OVERCURRENT", "TRIPPED_ESTOP", "TRIPPED_SENSOR_FAULT"],
+          "default": "SAFE_DISARMED",
+          "description": "Hardware safety interlock state"
+        },
+        "quality_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Data quality markers: VALID, SENSOR_READ_FAILED, CLOCK_UNSYNCED, NOISY_DIVIDER, SATURATED_ADC"
+        },
+        "calibration_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Active sensor calibration version string"
+        },
+        "uptime_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Milliseconds elapsed since boot"
+        },
+        "ts_source": {
+          "type": "string",
+          "enum": ["sntp", "rtc", "boot_relative", "simulated"],
+          "description": "Source of timestamp synchronization"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["idle", "charging", "discharging", "capacity_test", "pulse_test", "error_abort"],
+          "description": "Current test rig operating mode"
+        }
+      }
+    }
+  }
+}

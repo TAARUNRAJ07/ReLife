@@ -1,0 +1,22 @@
+Item,RefDes,Category,Component / Part Description,Manufacturer / MPN,Key Specifications,Quantity,Datasheet / Reference Link
+1,BAT1,Battery,1S Lithium-Ion Cell,Generic / Specified Model,"3.7V nominal, 2000mAh, 4.2V full charge, bare cell",1,https://relife.local/docs/battery_spec
+2,F1,Protection,Primary DC Fast Fuse,Littelfuse 0297003.WXNV,"3A, 32V DC, Fast-Acting Mini Blade, 1000A AIC",2,https://www.littelfuse.com/products/fuses/automotive-aftermarket-fuses/blade-fuses/mini.aspx
+3,FH1,Protection,In-Line Fuse Holder,Littelfuse 0FHM0001ZXJ,"16 AWG leads, waterproof enclosed mini-blade socket",1,https://www.littelfuse.com/
+4,SW1,Switch,Manual DC Isolation Switch,NKK Switches S302 / Heavy Toggle,"20A @ 30V DC, Single Pole Single Throw (SPST)",1,https://www.nkkswitches.com/
+5,ES1,Safety,Emergency Stop Switch,Schneider Electric / XB4BS542,"Mushroom-head twist-to-release, 10A DC rated, 1NC+1NO",1,https://www.se.com/
+6,RY1,Actuator,Safety Interlock DC Relay/Contactor,Omron G2R-1-E-DC5 (or 5V opto-relay module),"5V coil, 16A @ 30V DC contacts, SPDT",1,https://www.components.omron.com/
+7,BMS1,Protection,1S Hardware PCM / Protection Module,DW01A + FS8205A Dual-MOSFET Board,"4.28V OVP, 2.50V UVP, 3.5A overcurrent cutoff",1,https://relife.local/docs/bms_selection
+8,R_SHUNT,Sensor,Precision Current Shunt,Vishay Dale WSL2512R0100FEA (or chassis shunt),"10 mΩ (0.010 Ω), 2W rating, 1% tolerance, 4-terminal Kelvin",1,https://www.vishay.com/docs/30100/wsl.pdf
+9,U1,Sensor,Current/Voltage Telemetry Front-End,Texas Instruments INA226AIDGSR,"16-bit I2C bi-directional current/voltage monitor, 3.3V logic",1,https://www.ti.com/product/INA226
+10,U2,Controller,ESP32 Microcontroller Board,Espressif ESP32-WROOM-32D DevKit,"Dual-core Xtensa 240MHz, Wi-Fi 802.11bgn, 3.3V logic, FreeRTOS",1,https://www.espressif.com/
+11,ISO1,Safety,USB Galvanic Isolator,Analog Devices ADuM3160 Evaluation / Dongle,"1500 Vrms galvanic isolation, USB 2.0 Full Speed",1,https://www.analog.com/adum3160
+12,TH1-TH4,Sensor,Digital 1-Wire Temperature Probes,Dallas / Maxim DS18B20 (Waterproof probe),"1-Wire digital temperature, ±0.5°C accuracy (-10°C to 85°C)",4,https://www.analog.com/ds18b20
+13,DISP1,Display,OLED Graphical Display Module,Solomon Systech SSD1306,"0.96 inch, 128x64 monochrome OLED, I2C 3.3V (0x3C)",1,https://relife.local/docs/04_hardware_daq
+14,SD1,Storage,MicroSD SPI Socket Breakout,Generic / Adafruit 254,"SPI interface, 3.3V logic level, FAT32 formatting",1,https://relife.local/docs/04_hardware_daq
+15,U3,Logic,Bidirectional Logic Level Shifter,Texas Instruments TXS0108EPWR,"8-channel bidirectional auto-direction level translator 3.3V/5V",1,https://www.ti.com/product/TXS0108E
+16,R_PU1-3,Passive,I2C and 1-Wire Pull-Up Resistors,Yageo RC0805FR-074K7L,"4.7 kΩ, 1/8W, 1% tolerance, SMD 0805",3,https://relife.local/docs/04_hardware_daq
+17,LOAD1,Load,Programmable DC Electronic Load / Resistor,East Tester ET5410 or 50W 3.9Ω Wirewound,"150W, 0-60V, 0-30A programmable CC/CV load (or 50W power resistor)",1,https://relife.local/docs/wiring_spec
+18,CHG1,Charger,Benchtop CC-CV Power Supply / TP4056 Module,Korad KD3005D / TP4056 Adjusted,"0-30V 0-5A CC-CV adjustable (set to 4.20V, 0.40A - 1.00A cutoff 50mA)",1,https://relife.local/docs/wiring_spec
+19,CON1,Interconnect,Polarized High-Current Connectors,Amass XT60H / XT30U,"Gold-plated copper, 30A continuous rating, keyed polarity",4,https://www.amasscn.net/
+20,W1,Wiring,High-Temperature Silicone Hookup Wire,BNTECHGO 16 AWG Silicone Wire (Red/Black),"16 AWG stranded copper, 200°C silicone insulation, 15A rating",2,https://relife.local/docs/wiring_spec
+21,ENC1,Enclosure,Insulated Battery Containment Enclosure,Steel LiPo Safe Box / Custom Enclosure,"Heavy steel shell with ceramic non-conductive interior liner",1,https://relife.local/docs/safety_plan

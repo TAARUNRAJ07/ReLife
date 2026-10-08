@@ -1,0 +1,30 @@
+# PlatformIO & Build artifacts
+.pio/
+.pioenvs/
+.piolibdeps/
+.clangd/
+.vscode/
+
+# ReLife Secrets - NEVER COMMIT SECRETS
+secrets.h
+firmware/include/secrets.h
+*/secrets.h
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.env
+venv/
+.venv/
+
+# Test & Journal Data
+*.log
+*.jsonl
+tools/hw/mock_server/data/
+firmware/sd_card/
+
+# OS specific
+.DS_Store
+Thumbs.db

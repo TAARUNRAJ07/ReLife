@@ -1,0 +1,11 @@
+{
+  "boot_id": "boot-20261007-001",
+  "timestamp": "2026-10-07T21:30:00.000Z",
+  "uptime_s": 120,
+  "wifi_rssi_dbm": -58,
+  "free_heap_bytes": 184520,
+  "sd_free_bytes": 15482912,
+  "firmware_version": "0.1.0-dev",
+  "interlock_ok": true,
+  "active_test_id": "TEST-20261007-CAPACITY-01"
+}

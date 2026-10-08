@@ -1,0 +1,46 @@
+# ReLife Battery Safety Limits & Operational Envelope
+# DRAFT FOR HUMAN ENGINEER REVIEW - 1S 3.7V 2000mAh Lithium-Ion Cell
+
+battery_id_pattern: "^RL-BAT-[0-9]{4}$"
+pack_configuration: "1S1P"
+
+cell_spec:
+  manufacturer: "Generic Li-ion Cell"
+  model: "3.7V 2000mAh Bare Cell"
+  chemistry: "Lithium-Ion (NMC / LiCoO2)"
+  rated_capacity_ah: 2.00
+  rated_capacity_c_rate: "0.2C / 0.5C"
+  nominal_voltage_v: 3.70
+  full_charge_voltage_v: 4.20
+  charge_cutoff_current_a: 0.05
+  discharge_cutoff_voltage_v: 3.00
+  max_continuous_charge_current_a: 1.00  # 0.5C standard
+  max_continuous_discharge_current_a: 2.00  # 1.0C rating
+  temp_limits_c:
+    charge_min: 0.0
+    charge_max: 45.0
+    discharge_min: -10.0
+    discharge_max: 55.0
+
+pcm_bms_spec:
+  type: "External 1S Protection Circuit Module (PCM / DW01A+MOSFET)"
+  required: true  # Mandatory under Rule 1 for bare cells
+  protection_thresholds:
+    cell_overvoltage_trip_v: 4.28
+    cell_overvoltage_release_v: 4.08
+    cell_undervoltage_trip_v: 2.50
+    cell_undervoltage_release_v: 3.00
+    discharge_overcurrent_trip_a: 3.50
+    short_circuit_delay_us: 50.0
+
+operational_rig_limits:
+  test_discharge_current_a: 1.00  # 0.5C characterization rate
+  gentle_charge_current_a: 0.40   # 0.2C recharge rate
+  interlock_voltage_cutoff_low_v: 3.00
+  interlock_voltage_cutoff_high_v: 4.22
+  interlock_max_temp_c: 50.0
+  interlock_overcurrent_trip_a: 1.50
+  primary_fuse_rating_a: 3.00     # Fast-blow DC fuse at B+ terminal
+
+conflict_flags:
+  - note: "Bare cell requires external hardware PCM board and 3A fast DC fuse before testing."

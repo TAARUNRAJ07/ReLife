@@ -1,0 +1,319 @@
+openapi: 3.0.3
+info:
+  title: ReLife Device Hardware Telemetry & Control API
+  description: >-
+    Interface contract between ReLife ESP32 test rigs and the ReLife backend
+    system (Phase HS). Covers telemetry ingestion, periodic heartbeat, command polling,
+    and command execution acknowledgement.
+  version: 1.0.0
+servers:
+  - url: https://api.relife.local/api/v1
+    description: Production ReLife Backend
+  - url: http://127.0.0.1:8000/api/v1
+    description: Local Hardware Mock Backend
+
+security:
+  - DeviceKeyAuth: []
+
+paths:
+  /devices/{device_id}/telemetry:
+    post:
+      summary: Ingest Telemetry Batch
+      description: Ingests a batch of telemetry records from the ESP32 rig. Idempotent based on (device_id, boot_id, seq).
+      operationId: ingestTelemetry
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9_-]+$'
+          description: Device hardware ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './telemetry.schema.json'
+      responses:
+        '200':
+          description: Batch accepted and acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ack_up_to_seq
+                  - received_count
+                  - duplicates
+                  - rejected
+                properties:
+                  ack_up_to_seq:
+                    type: integer
+                    description: Highest consecutive sequence number safely persisted by server for this boot_id
+                  received_count:
+                    type: integer
+                    description: Number of records processed in this batch
+                  duplicates:
+                    type: integer
+                    description: Number of records skipped because they were already received
+                  rejected:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - seq
+                        - reason
+                      properties:
+                        seq:
+                          type: integer
+                        reason:
+                          type: string
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '429':
+          $ref: '#/components/responses/429TooManyRequests'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+
+  /devices/{device_id}/heartbeat:
+    post:
+      summary: Report Device Heartbeat
+      description: Periodic device status update to maintain online presence and verify diagnostics.
+      operationId: reportHeartbeat
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - boot_id
+                - timestamp
+                - uptime_s
+                - wifi_rssi_dbm
+                - free_heap_bytes
+                - sd_free_bytes
+                - firmware_version
+                - interlock_ok
+              properties:
+                boot_id:
+                  type: string
+                timestamp:
+                  type: string
+                  format: date-time
+                uptime_s:
+                  type: integer
+                wifi_rssi_dbm:
+                  type: integer
+                free_heap_bytes:
+                  type: integer
+                sd_free_bytes:
+                  type: integer
+                firmware_version:
+                  type: string
+                interlock_ok:
+                  type: boolean
+                active_test_id:
+                  type: ["string", "null"]
+      responses:
+        '200':
+          description: Heartbeat accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - server_time
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  server_time:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+
+  /devices/{device_id}/commands:
+    get:
+      summary: Poll Pending Commands
+      description: Retrieve queued commands for this test rig (e.g., START_LOG, START_TEST, STOP_TEST, REQUEST_STATUS).
+      operationId: getPendingCommands
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of pending commands
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - commands
+                properties:
+                  commands:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - command_id
+                        - command
+                        - params
+                        - created_at
+                      properties:
+                        command_id:
+                          type: string
+                        command:
+                          type: string
+                          enum:
+                            - START_LOG
+                            - START_TEST
+                            - STOP_TEST
+                            - REQUEST_STATUS
+                        params:
+                          type: object
+                          additionalProperties: true
+                        created_at:
+                          type: string
+                          format: date-time
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+
+  /devices/{device_id}/commands/{command_id}/ack:
+    post:
+      summary: Acknowledge Command Execution
+      description: ESP32 acknowledges the execution status of a previously received command.
+      operationId: acknowledgeCommand
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: command_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+                - timestamp
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - EXECUTED
+                    - REJECTED
+                    - FAILED
+                error:
+                  type: ["string", "null"]
+                timestamp:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Command acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - acknowledged
+                properties:
+                  acknowledged:
+                    type: boolean
+                    example: true
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          description: Command ID not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/500InternalError'
+
+components:
+  securitySchemes:
+    DeviceKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Device-Key
+      description: Preshared 256-bit cryptographic hex key assigned to the device
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - error_code
+        - message
+        - timestamp
+      properties:
+        error_code:
+          type: string
+          example: INVALID_PAYLOAD
+        message:
+          type: string
+          example: 'Validation failed on record seq 14: missing battery_id'
+        timestamp:
+          type: string
+          format: date-time
+        details:
+          type: object
+          additionalProperties: true
+
+  responses:
+    400BadRequest:
+      description: Invalid request payload or schema violation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    401Unauthorized:
+      description: Missing or invalid X-Device-Key header
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    429TooManyRequests:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retry
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    500InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

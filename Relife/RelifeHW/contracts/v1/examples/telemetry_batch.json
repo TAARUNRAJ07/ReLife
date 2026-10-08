@@ -1,0 +1,38 @@
+{
+  "device_id": "ESP32-RIG-001",
+  "boot_id": "boot-20261007-001",
+  "sent_at": "2026-10-07T21:30:00.000Z",
+  "source": "live",
+  "records": [
+    {
+      "seq": 1,
+      "timestamp": "2026-10-07T21:29:58.000Z",
+      "battery_id": "RL-BAT-0042",
+      "pack_voltage_v": 13.24,
+      "current_a": 2.50,
+      "cell_voltages_v": [3.31, 3.31, 3.31, 3.31],
+      "temperatures_c": [24.5, 25.1, 26.0, 23.8],
+      "bms_soc_pct": 78.5,
+      "bms_soh_pct": 92.0,
+      "ah_discharged": 0.05,
+      "interlock_state": "ARMED_ACTIVE",
+      "quality_flags": ["VALID"],
+      "calibration_version": "v1.0.0"
+    },
+    {
+      "seq": 2,
+      "timestamp": "2026-10-07T21:29:59.000Z",
+      "battery_id": "RL-BAT-0042",
+      "pack_voltage_v": 13.23,
+      "current_a": 2.51,
+      "cell_voltages_v": [3.308, 3.309, 3.307, 3.306],
+      "temperatures_c": [24.6, 25.2, 26.1, 23.9],
+      "bms_soc_pct": 78.4,
+      "bms_soh_pct": 92.0,
+      "ah_discharged": 0.0507,
+      "interlock_state": "ARMED_ACTIVE",
+      "quality_flags": ["VALID"],
+      "calibration_version": "v1.0.0"
+    }
+  ]
+}
